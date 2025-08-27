@@ -1,0 +1,56 @@
+import pandas as pd
+import numpy as np
+import random
+
+# Set random seed for reproducibility
+random.seed(42)
+np.random.seed(42)
+
+# Sample data options
+parts = [
+    "Main Landing Gear", "Nose Gear", "Hydraulic Actuator", "Brake Assembly",
+    "Steering Unit", "Strut", "Tire", "Shock Absorber", "Drag Brace", "Retract Actuator"
+]
+
+airlines = ["AirGlobal", "SkyFleet", "AeroLine", "CloudJet", "FlyHigh"]
+
+damage_types = [
+    "Normal Wear", "Foreign Object Damage (FOD)", "Customer Mishandling",
+    "Corrosion", "Unknown", "Overhaul Required"
+]
+
+# Damage-based contract coverage rules
+def is_billable(damage):
+    billable = ["Foreign Object Damage (FOD)", "Customer Mishandling", "Unknown"]
+    return "Yes" if damage in billable else "No"
+
+# Generate synthetic dataset
+num_records = 200
+data = []
+
+for i in range(num_records):
+    part = random.choice(parts)
+    airline = random.choice(airlines)
+    damage = random.choice(damage_types)
+    cost = round(np.random.uniform(1500, 25000), 2)  # repair cost
+    teardown_note = f"Teardown revealed: {damage.lower()}."
+    billable = is_billable(damage)
+
+    data.append({
+        "Repair ID": f"R{i+1:04}",
+        "Part": part,
+        "Airline": airline,
+        "Damage Type": damage,
+        "Repair Cost (USD)": cost,
+        "Teardown Report": teardown_note,
+        "Billable to Customer": billable
+    })
+
+# Create DataFrame
+df = pd.DataFrame(data)
+
+# Preview
+print(df.head())
+
+# Optional: Save to CSV
+df.to_csv("repair_events_dataset.csv", index=False)
